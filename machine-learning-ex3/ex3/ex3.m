@@ -41,7 +41,7 @@ sel = X(rand_indices(1:100), :);
 
 displayData(sel);
 
-fprintf('Program paused. Press enter to continue.\n');
+fprintf('Friday  Program paused. Press enter to continue.\n');
 pause;
 
 %% ============ Part 2: Vectorize Logistic Regression ============

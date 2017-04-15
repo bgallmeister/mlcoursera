@@ -45,21 +45,18 @@ partial = log(h) .* y + log(1-h) .* not(y);
 % non-regularized:
 % J = (-1 * sum(partial)) / m;
 % regularized:
+theta(1) = 0;  % Don't regularize theta(0).
 J = ((-1 * sum(partial)) + (lambda * (theta.' * theta) / 2)) / m;
 
     
 % =============================================================
 
-%This doesn't work.  I am stupid.
-%for i=1:size(theta)
-%    grad(i) = (X(:,i).' * (h - y)) / m;
-%end
 % Non-regularized:
 % grad = (X.' * (h - y)) / m;
 % Regularized:
-theta_except_zero = theta;
-theta(1) = 0; % Don't regularize the 0th term.
-grad = ((X.' * (h - y)) + (lambda * theta_except_zero)) / m;
+% theta_except_zero = theta;
+% theta(1) = 0; % Don't regularize the 0th term.
+grad = ((X.' * (h - y)) + (lambda * theta)) / m;
 
 %grad = (h - y) * X
 %grad = grad(:);
