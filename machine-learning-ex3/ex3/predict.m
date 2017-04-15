@@ -21,6 +21,11 @@ p = zeros(size(X, 1), 1);
 %       can use max(A, [], 2) to obtain the max for each row.
 %
 
+X = [ones(m, 1) X];             % Add on bias unit to input.
+a2 = sigmoid(X * Theta1');      % 5000 x 25.
+a2 = [ones(size(a2,1), 1) a2];  % Add bias unit to hidden layer.
+h = sigmoid(a2 * Theta2');      % 5000 x 10.
+[Y, p] = max(h, [], 2);         % index of the biggest element.
 
 
 
