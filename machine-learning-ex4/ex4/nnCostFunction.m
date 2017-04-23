@@ -62,8 +62,57 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
+% First do the prediction using the passed-in X and Theta.
+X = [ones(m, 1) X];             % Add on bias unit to input.
+
+BigDelta2 = zeros(size(Theta2_grad));
+BigDelta1 = zeros(size(Theta1_grad));
+
+partialsum = 0;
+for i = 1:m
+    % Forward prop for X(i)
+    z2 = X(i,:) * Theta1';          % 1 x 25.
+    a2 = sigmoid(z2);
+    a2 = [1 a2];                    % Add bias unit to hidden layer.
+    h = sigmoid(a2 * Theta2');      % 1 x 10.
+    [unused, my_y] = max(h, [], 2);           % index of the biggest element.
+    
+    % Recode My_Y as vector.  I bet there is a spiffy Matlab way to do this.
+    %my_ymatrix = zeros(num_labels, 1);
+    %my_ymatrix(my_y) = 1;
+
+    % Recode Y as vector.  I bet there is a spiffy Matlab way to do this.
+    ymatrix = zeros(1, num_labels);
+    ymatrix(y(i)) = 1;
+    
+    % Forward prop done;  determine cost for this sample.
+    % Partial result.
+    partial = log(h) .* ymatrix + log(1-h) .* not(ymatrix);
+    partialsum = partialsum + sum(partial);
+    
+    % Backprop.
+    LittleDelta3 = (h - ymatrix); 
+    LittleDelta2 = LittleDelta3 * Theta2 .* [1 sigmoidGradient(z2)];
+    BigDelta2 = BigDelta2 + LittleDelta3' * a2;
+    BigDelta1 = BigDelta1 + LittleDelta2(2:hidden_layer_size+1)' * X(i,:);
+end
 
 
+% Now sum it all and divide by m...
+% non-regularized:
+% J = (-1 * sum(partial)) / m;
+% regularized:
+% theta(1) = 0;  % Don't regularize theta(0).
+% J = ((-1 * sum(partial)) + (lambda * (theta.' * theta) / 2)) / m;
+t1 = Theta1(:,2:input_layer_size+1);
+t2 = Theta2(:,2:hidden_layer_size+1);
+J = ((-1 * partialsum) + ((lambda/2) * (sum(sum(t1 .* t1)) + sum(sum(t2 .* t2))))) / m;
+
+
+Theta1_grad = (BigDelta1 + lambda * Theta1) / m;
+Theta1_grad(:,1) = BigDelta1(:,1) / m;
+Theta2_grad = (BigDelta2 + lambda * Theta2) / m;
+Theta2_grad(:,1) = BigDelta2(:,1) / m;
 
 
 
